@@ -1,0 +1,62 @@
+name: 'BoringCache Gradle'
+description: 'Cache once. Reuse everywhere. Gradle build cache backed by BoringCache.'
+author: 'BoringCache'
+
+inputs:
+  cli-version:
+    description: 'BoringCache CLI version (e.g., v1.0.0). Set to "skip" to disable automatic CLI setup.'
+    required: false
+    default: 'v1.2.0'
+  workspace:
+    description: 'BoringCache workspace identifier (e.g., my-org/my-project). Defaults to repository name.'
+    required: false
+  cache-tag:
+    description: 'Cache tag for BoringCache. Defaults to repository name.'
+    required: false
+    default: ''
+  proxy-port:
+    description: 'Port for the BoringCache cache proxy.'
+    required: false
+    default: '5000'
+  read-only:
+    description: 'Do not push build results to cache (useful for PRs).'
+    required: false
+    default: 'false'
+  gradle-home:
+    description: 'Gradle user home directory (for init script and properties).'
+    required: false
+    default: '~/.gradle'
+  enable-build-cache:
+    description: 'Set org.gradle.caching=true in gradle.properties.'
+    required: false
+    default: 'true'
+  proxy-no-git:
+    description: 'Pass `--no-git` to BoringCache proxy.'
+    required: false
+    default: 'false'
+  proxy-no-platform:
+    description: 'Pass `--no-platform` to BoringCache proxy.'
+    required: false
+    default: 'false'
+  verbose:
+    description: 'Enable verbose CLI output for debugging.'
+    required: false
+    default: 'false'
+
+outputs:
+  cache-tag:
+    description: 'Resolved cache tag.'
+  proxy-port:
+    description: 'Proxy port used.'
+  workspace:
+    description: 'Resolved workspace.'
+
+runs:
+  using: 'node24'
+  main: 'dist/restore/index.js'
+  post: 'dist/save/index.js'
+  post-if: always()
+
+branding:
+  icon: 'package'
+  color: 'blue'
