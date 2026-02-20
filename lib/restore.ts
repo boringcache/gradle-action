@@ -30,7 +30,7 @@ async function run(): Promise<void> {
     core.saveState('verbose', verbose.toString());
 
     if (cliVersion.toLowerCase() !== 'skip') {
-      await ensureBoringCache({ version: cliVersion || 'v1.2.0' });
+      await ensureBoringCache({ version: cliVersion || 'v1.3.0' });
     }
 
     const proxy = await startRegistryProxy({

@@ -43,7 +43,7 @@ For pull request builds, set `read-only: true` to prevent pushing results while 
 
 | Input | Default | Description |
 |-------|---------|-------------|
-| `cli-version` | `v1.2.0` | BoringCache CLI version. Set to `skip` to disable automatic setup. |
+| `cli-version` | `v1.3.0` | BoringCache CLI version. Set to `skip` to disable automatic setup. |
 | `workspace` | | BoringCache workspace (e.g., `my-org/my-project`). |
 | `cache-tag` | repo name | Cache tag prefix. |
 | `proxy-port` | `5000` | Port for the cache proxy. |

@@ -51,7 +51,7 @@ async function run() {
         core.saveState('cacheTag', cacheTag);
         core.saveState('verbose', verbose.toString());
         if (cliVersion.toLowerCase() !== 'skip') {
-            await (0, utils_1.ensureBoringCache)({ version: cliVersion || 'v1.2.0' });
+            await (0, utils_1.ensureBoringCache)({ version: cliVersion || 'v1.3.0' });
         }
         const proxy = await (0, utils_1.startRegistryProxy)({
             command: 'cache-registry',
