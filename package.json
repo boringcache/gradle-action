@@ -1,6 +1,6 @@
 {
   "name": "boringcache-gradle",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "description": "Gradle build cache backed by BoringCache.",
   "main": "dist/restore/index.js",
   "scripts": {
