@@ -135,7 +135,7 @@ describe('Gradle restore/save round-trip', () => {
       host: '127.0.0.1',
       port: 5000,
     }));
-    expect(waitForProxy).toHaveBeenCalledWith(5000, 20000, 54321);
+    expect(waitForProxy).toHaveBeenCalledWith(5000, undefined, 54321);
 
     // Verify init.d directory was created
     expect(fs.mkdirSync).toHaveBeenCalledWith(
