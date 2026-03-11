@@ -42,11 +42,13 @@ async function run(): Promise<void> {
       noGit: proxyNoGit,
       noPlatform: proxyNoPlatform,
       verbose,
+      readOnly,
     });
     await waitForProxy(proxy.port, undefined, proxy.pid);
     core.saveState('proxyPid', String(proxy.pid));
 
-    writeGradleInitScript(gradleHome, proxy.port, readOnly);
+    const effectiveReadOnly = proxy.readOnly ?? readOnly;
+    writeGradleInitScript(gradleHome, proxy.port, effectiveReadOnly);
 
     if (enableBuildCache) {
       enableGradleBuildCache(gradleHome);

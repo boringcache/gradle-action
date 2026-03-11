@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const utils_1 = require("./utils");
 async function run() {
+    var _a;
     try {
         const cliVersion = core.getInput('cli-version') || '';
         const workspace = (0, utils_1.getWorkspace)(core.getInput('workspace') || '');
@@ -62,10 +63,12 @@ async function run() {
             noGit: proxyNoGit,
             noPlatform: proxyNoPlatform,
             verbose,
+            readOnly,
         });
         await (0, utils_1.waitForProxy)(proxy.port, undefined, proxy.pid);
         core.saveState('proxyPid', String(proxy.pid));
-        (0, utils_1.writeGradleInitScript)(gradleHome, proxy.port, readOnly);
+        const effectiveReadOnly = (_a = proxy.readOnly) !== null && _a !== void 0 ? _a : readOnly;
+        (0, utils_1.writeGradleInitScript)(gradleHome, proxy.port, effectiveReadOnly);
         if (enableBuildCache) {
             (0, utils_1.enableGradleBuildCache)(gradleHome);
         }
