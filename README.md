@@ -1,34 +1,10 @@
 # boringcache/gradle-action
 
-**Cache once. Reuse everywhere.**
+Run a Gradle build cache backed by BoringCache.
 
-Gradle build cache backed by BoringCache. This action starts a local HTTP build cache proxy that Gradle talks to natively. No bulk save/restore steps needed.
+The action starts a local HTTP proxy and wires Gradle to it through an init script.
 
 ## Quick start
-
-```yaml
-- uses: boringcache/gradle-action@v1
-  with:
-    workspace: my-org/my-project
-  env:
-    BORINGCACHE_SAVE_TOKEN: ${{ secrets.BORINGCACHE_SAVE_TOKEN }}
-
-- run: ./gradlew build
-```
-
-The action configures Gradle's remote build cache via an init script. Gradle reads and writes cache entries through the proxy transparently.
-
-## How it works
-
-1. **Main step**: Installs the BoringCache CLI, starts a local HTTP build cache proxy, writes a Gradle init script to `~/.gradle/init.d/`, and optionally enables `org.gradle.caching=true`.
-2. **Build**: Gradle reads/writes cache entries via the proxy using its native HTTP Build Cache protocol.
-3. **Post step**: Stops the proxy (flushes any pending uploads).
-
-No explicit save or restore is needed. The proxy handles cache reads and writes as Gradle requests them.
-
-## Read-only mode
-
-For pull request builds, set `read-only: true` and provide only a restore-capable token. Trusted branch/tag jobs can add `BORINGCACHE_SAVE_TOKEN` when writes are allowed:
 
 ```yaml
 - uses: boringcache/gradle-action@v1
@@ -37,27 +13,40 @@ For pull request builds, set `read-only: true` and provide only a restore-capabl
     read-only: ${{ github.event_name == 'pull_request' }}
   env:
     BORINGCACHE_RESTORE_TOKEN: ${{ secrets.BORINGCACHE_RESTORE_TOKEN }}
+    BORINGCACHE_SAVE_TOKEN: ${{ github.event_name == 'pull_request' && '' || secrets.BORINGCACHE_SAVE_TOKEN }}
+
+- run: ./gradlew build
 ```
 
-## Inputs
+## What it does
 
-| Input | Default | Description |
-|-------|---------|-------------|
-| `cli-version` | `v1.12.1` | BoringCache CLI version. Set to `skip` to disable automatic setup. |
-| `workspace` | | BoringCache workspace (e.g., `my-org/my-project`). |
-| `cache-tag` | repo name | Cache tag prefix. |
-| `proxy-port` | `5000` | Port for the cache proxy. |
-| `read-only` | `false` | Don't push build results (useful for PRs). |
-| `gradle-home` | `~/.gradle` | Gradle user home directory. |
-| `enable-build-cache` | `true` | Set `org.gradle.caching=true` in `gradle.properties`. |
-| `proxy-no-git` | `false` | Pass `--no-git` to the proxy. |
-| `proxy-no-platform` | `false` | Pass `--no-platform` to the proxy. |
-| `verbose` | `false` | Enable verbose CLI output. |
+- Installs the CLI.
+- Starts a local cache-registry proxy.
+- Writes a Gradle init script that points at the proxy.
+- Flushes pending uploads when the job finishes.
+
+## Key inputs
+
+| Input | Description |
+|-------|-------------|
+| `workspace` | Workspace in `org/repo` form. Defaults to the repo name. |
+| `cache-tag` | Cache tag prefix. Defaults to the repo name. |
+| `read-only` | Disable remote writes on PRs or other low-trust jobs. |
+| `proxy-port` | Port for the local proxy. |
+| `gradle-home` | Gradle user home directory. |
+| `enable-build-cache` | Force `org.gradle.caching=true`. |
+| `cli-version` | CLI version to install. |
 
 ## Outputs
 
 | Output | Description |
 |--------|-------------|
 | `cache-tag` | Resolved cache tag. |
-| `proxy-port` | Proxy port used. |
-| `workspace` | Resolved workspace. |
+| `proxy-port` | Proxy port in use. |
+| `workspace` | Resolved workspace name. |
+
+## Docs
+
+- [GitHub Actions docs](https://boringcache.com/docs#language-actions)
+- [GitHub Actions auth and trust model](https://boringcache.com/docs#actions-auth)
+- [Native proxy integrations](https://boringcache.com/docs#cli-cache-registry)
