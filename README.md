@@ -1,8 +1,10 @@
 # boringcache/gradle-action
 
-Run a Gradle build cache backed by BoringCache.
+Run a local Gradle build cache backed by BoringCache.
 
-The action starts a local HTTP proxy and wires Gradle to it through an init script.
+## When to use it
+
+Use it when Gradle should keep using its native HTTP build cache and you do not want to archive `.gradle` by hand.
 
 ## Quick start
 
@@ -18,7 +20,13 @@ The action starts a local HTTP proxy and wires Gradle to it through an init scri
 - run: ./gradlew build
 ```
 
-## What it does
+## Trust model
+
+- Use `read-only: true` on pull requests and other low-trust jobs.
+- Restore-only jobs can use `BORINGCACHE_RESTORE_TOKEN`; writes should use `BORINGCACHE_SAVE_TOKEN`.
+- Keep trusted writes on protected branches or isolated tag scopes.
+
+## What it handles
 
 - Installs the CLI.
 - Starts a local cache-registry proxy.
@@ -45,7 +53,7 @@ The action starts a local HTTP proxy and wires Gradle to it through an init scri
 | `proxy-port` | Proxy port in use. |
 | `workspace` | Resolved workspace name. |
 
-## Docs
+## Learn more
 
 - [GitHub Actions docs](https://boringcache.com/docs#language-actions)
 - [GitHub Actions auth and trust model](https://boringcache.com/docs#actions-auth)
